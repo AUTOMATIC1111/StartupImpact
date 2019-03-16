@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ModMetaData>
+	<name>Startup impact</name>
+	<author>AUTOMATIC</author>
+	<supportedVersions><li>1.0</li></supportedVersions>
+	<description><![CDATA[Measures how long it takes for mods to load.
+    
+Use the button in main menu to view statistics.
+]]></description>
+</ModMetaData>
