@@ -6,5 +6,7 @@
 	<description><![CDATA[Measures how long it takes for mods to load.
     
 Use the button in main menu to view statistics.
+
+This mod must be first in the mod list to work properly.
 ]]></description>
 </ModMetaData>
