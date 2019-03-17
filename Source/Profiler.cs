@@ -73,7 +73,6 @@ namespace StartupImpact
             {
                 if (startTime != -1)
                 {
-//                    Log.Error("Starting measurment for " + cat + " while stopwatch is already measuring " + category + "; for " + profiler.what+", thread="+ Thread.CurrentThread.ManagedThreadId);
                     return;
                 }
 
@@ -86,12 +85,10 @@ namespace StartupImpact
             {
                 if (startTime == -1)
                 {
-//                    Log.Error("Stopping measurment while stopwatch is already stopped; for " + profiler.what + ", thread=" + Thread.CurrentThread.ManagedThreadId);
                     return 0;
                 }
                 if (cat != category)
                 {
- //                   Log.Error("Stopping measurment for " + cat + " while stopwatch is measuring " + category + "; for " + profiler.what + ", thread=" + Thread.CurrentThread.ManagedThreadId);
                     return 0;
                 }
 
@@ -99,7 +96,46 @@ namespace StartupImpact
                 startTime = -1;
                 return ms;
             }
+        }
 
+        class SingleThreadDateTime
+        {
+            Profiler profiler;
+            DateTime startTime = DateTime.MinValue;
+            string category;
+
+            internal SingleThreadDateTime(Profiler profiler)
+            {
+                this.profiler = profiler;
+            }
+
+            public void Start(string cat)
+            {
+                if (startTime != DateTime.MinValue)
+                {
+                    return;
+                }
+
+                startTime = DateTime.Now;
+                category = cat;
+            }
+
+
+            public int Stop(string cat)
+            {
+                if (startTime == DateTime.MinValue)
+                {
+                    return 0;
+                }
+                if (cat != category)
+                {
+                    return 0;
+                }
+
+                int ms = (DateTime.Now - startTime).Milliseconds;
+                startTime = DateTime.MinValue;
+                return ms;
+            }
         }
     }
 }

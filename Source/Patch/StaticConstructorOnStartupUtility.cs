@@ -22,7 +22,9 @@ namespace StartupImpact.Patch
             }
             StaticConstructorOnStartupUtility.coreStaticAssetsLoaded = true;
 
-            StartupImpact.loadingTime = Environment.TickCount - StartupImpact.loadingTime;
+            if (!StartupImpact.loadingTimeMeasured) {
+                StartupImpact.loadingTime = Environment.TickCount - StartupImpact.loadingTime;
+            }
 
             return false;
         }
