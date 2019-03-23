@@ -80,8 +80,12 @@
     <Compile Include="Patch\StaticConstructorOnStartupUtility.cs" />
     <Compile Include="Profiler.cs" />
     <Compile Include="ProfilerBar.cs" />
+    <Compile Include="ProfilerDate.cs" />
+    <Compile Include="ProfilerSingleThread.cs" />
+    <Compile Include="ProfilerStopwatch.cs" />
     <Compile Include="ProfilerTickCount.cs" />
     <Compile Include="StartupImpact.cs" />
+    <Compile Include="StartupImpactSettings.cs" />
     <Compile Include="UiTable.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

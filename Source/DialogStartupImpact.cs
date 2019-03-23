@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using UnityEngine;
 using Verse;
@@ -12,24 +13,25 @@ namespace StartupImpact
     {
         public override Vector2 InitialSize => new Vector2(800f, Math.Min(800,UI.screenHeight*0.75f));
 
-        public static readonly Dictionary<string, Texture2D> categoryColors = new Dictionary<string, Texture2D>
+        public static readonly Dictionary<string, Color> categoryColors = new Dictionary<string, Color>
         {
-            { "textures", SolidColorMaterials.NewSolidColorTexture(new Color(156f/255, 147f/255, 67f/255)) },
-            { "audioclips", SolidColorMaterials.NewSolidColorTexture(new Color(117f/255, 67f/255, 156f/255))},
-            { "strings", SolidColorMaterials.NewSolidColorTexture(new Color(130f/255, 130f/255, 130f/255))},
-            { "defs-0-load", SolidColorMaterials.NewSolidColorTexture(new Color(84f/255, 207f/255, 154f/255))},
-            { "defs-1-create", SolidColorMaterials.NewSolidColorTexture(new Color(72f/255, 121f/255, 175f/255))},
-            { "load-patches", SolidColorMaterials.NewSolidColorTexture(new Color(136f/255, 156f/255, 67f/255))},
-            { "patch", SolidColorMaterials.NewSolidColorTexture(new Color(156f/255, 67f/255, 121f/255))},
-            { "constructor", SolidColorMaterials.NewSolidColorTexture(new Color(176f/255, 223f/255, 224f/255))},
+            { "textures", new Color(156f/255, 147f/255, 67f/255) },
+            { "audioclips", new Color(117f/255, 67f/255, 156f/255)},
+            { "strings", new Color(130f/255, 130f/255, 130f/255)},
+            { "defs-0-load", new Color(84f/255, 207f/255, 154f/255)},
+            { "defs-1-create", new Color(72f/255, 121f/255, 175f/255)},
+            { "load-patches", new Color(136f/255, 156f/255, 67f/255)},
+            { "patch", new Color(156f/255, 67f/255, 121f/255)},
+            { "constructor", new Color(176f/255, 223f/255, 224f/255)},
 
-            { "total-mods", SolidColorMaterials.NewSolidColorTexture(new Color(175f/255, 126f/255, 72f/255))},
-            { "total-mods-hidden", SolidColorMaterials.NewSolidColorTexture(new Color(103f/255, 83f/255, 61f/255))},
-            { "total-basegame", SolidColorMaterials.NewSolidColorTexture(new Color(72f/255, 121f/255, 175f/255))},
-            { "total-others", SolidColorMaterials.NewSolidColorTexture(new Color(35f/255, 50f/255, 84f/255))},
+            { "total-mods", new Color(175f/255, 126f/255, 72f/255)},
+            { "total-mods-hidden", new Color(103f/255, 83f/255, 61f/255)},
+            { "total-basegame", new Color(72f/255, 121f/255, 175f/255)},
+            { "total-others", new Color(35f/255, 50f/255, 84f/255)},
             
         };
-        public static readonly Texture2D defaultColor = SolidColorMaterials.NewSolidColorTexture(new Color(120f / 255, 205f / 255, 168f / 255));
+        public static readonly Color defaultColor = new Color(120f / 255, 205f / 255, 168f / 255);
+        public static readonly Color infoColor = new Color(128 / 255f, 128 / 255f, 128 / 255f);
 
         public Dictionary<string, string> categoryHints = new Dictionary<string, string>();
 
@@ -39,13 +41,14 @@ namespace StartupImpact
         List<string> categories;
         List<string> categoriesTotal = new List<string> { "total-mods", "total-mods-hidden", "total-basegame", "total-others" };
         List<string> categoriesNonmods;
-        Dictionary<string, Texture2D> categoryColorsNonmods = new Dictionary<string, Texture2D>();
+        Dictionary<string, Color> categoryColorsNonmods = new Dictionary<string, Color>();
         Dictionary<string, string> categoryHintsNonmods = new Dictionary<string, string>();
 
         Dictionary<string, int> metricsTotal;
         int basegameLoadingTime;
         int modsLoadingTime;
         int hiddenModsLoadingTime;
+        bool failedMeasuringLoadingTime = false;
         UiTable table;
 
         public DialogStartupImpact() {
@@ -88,7 +91,12 @@ namespace StartupImpact
             }
 
             categories = catSet.OrderBy(x => x).ToList();
-            
+
+            if (StartupImpact.loadingTime == 0) {
+                StartupImpact.loadingTime = modsLoadingTime + hiddenModsLoadingTime + basegameLoadingTime;
+                failedMeasuringLoadingTime = true;
+            }
+
             metricsTotal = new Dictionary<string, int> {
                 { "total-mods", modsLoadingTime },
                 { "total-mods-hidden", hiddenModsLoadingTime },
@@ -107,7 +115,7 @@ namespace StartupImpact
                 int hash = cat.GetHashCode();
 
                 categoryHintsNonmods[cat] = title;
-                categoryColorsNonmods[cat] = SolidColorMaterials.NewSolidColorTexture(new Color((hash & 0xff) / 255f, ((hash>>8) & 0xff) / 255f, ((hash >> 16) & 0xff)/255f));
+                categoryColorsNonmods[cat] = new Color((hash & 0xff) / 255f, ((hash>>8) & 0xff) / 255f, ((hash >> 16) & 0xff)/255f);
                 categoriesNonmods.Add(cat);
 
                 basegameLoadingTime += StartupImpact.baseGameProfiler.metrics[cat];
@@ -135,7 +143,7 @@ namespace StartupImpact
 
             Rect nonmodsProfileRect = new Rect(0, y, area.width - 16, 46);
             ProfilerBar.Draw(nonmodsProfileRect, StartupImpact.baseGameProfiler.metrics, categoriesNonmods, basegameLoadingTime, categoryHintsNonmods, categoryColorsNonmods, defaultColor);
-            y += nonmodsProfileRect.height + 4;
+            y += nonmodsProfileRect.height + 8;
 
             Rect modsTitleRect = new Rect(0, y, area.width, 30);
             Widgets.Label(modsTitleRect, "StartupImpactStartupMods".Translate(ProfilerBar.TimeText(modsLoadingTime)));
@@ -166,14 +174,20 @@ namespace StartupImpact
 
             table.Stop();
 
+            
+            GUI.color = infoColor;
+            Text.Anchor = TextAnchor.LowerLeft;
+            Rect rect4 = new Rect(0, area.height - 35f, area.width- 120, 35f);
+            string verinfo = "StartupImpactVerinfo".Translate(StartupImpact.GetVersion(), StartupImpact.baseGameProfiler.profilerType.ToString().ToLowerInvariant());
+            if (failedMeasuringLoadingTime) verinfo += "StartupImpactFailedMeasuringLoadingTime".Translate();
+            Widgets.Label(rect4, verinfo);
+            
             GUI.color = Color.white;
-
             Rect rect3 = new Rect(area.width - 120, area.height - 35f, 120, 35f);
             if (Widgets.ButtonText(rect3, "Close".Translate(), true, false, true))
             {
                 Close();
             }
-
             Text.Anchor = TextAnchor.UpperLeft;
         }
         

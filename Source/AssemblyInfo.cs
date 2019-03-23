@@ -13,13 +13,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyCopyright("Copyright © AUTOMATIC 2019")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
-
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyVersion("1.0.350.0854")]
-[assembly: AssemblyFileVersion("1.0.350.0854")]
+[assembly: AssemblyVersion("1.1.*")]

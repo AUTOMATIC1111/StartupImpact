@@ -23,8 +23,8 @@ namespace StartupImpact
             List<string> categories,
             int maxImpact,
             Dictionary<string, string> categoryHints,
-            Dictionary<string, Texture2D> categoryColors,
-            Texture2D defaultColor,
+            Dictionary<string, Color> categoryColors,
+            Color defaultColor,
             float progressBarPadding = 4
         )
         {
@@ -38,12 +38,36 @@ namespace StartupImpact
                 metrics.TryGetValue(cat, out impact);
                 if (impact == 0) continue;
 
-                Texture2D tex = defaultColor;
-                categoryColors.TryGetValue(cat, out tex);
+                Color color;
+                if(! categoryColors.TryGetValue(cat, out color)) color = defaultColor;
 
                 float width = progressBarWidth * impact / maxImpact;
                 Rect textRect = new Rect(x + progressBarX, rect.y + progressBarPadding, width, rect.height - progressBarPadding * 2);
-                GUI.DrawTexture(textRect, tex);
+
+
+                Color stored = GUI.color;
+
+                if (Mouse.IsOver(textRect))
+                {
+                    GUI.color = Color.Lerp(color * stored, Color.white, 0.25f);
+                    if (textRect.width > 6)
+                    {
+                        GUI.DrawTexture(textRect, BaseContent.WhiteTex);
+                        GUI.color = color * stored;
+                        GUI.DrawTexture(GenUI.ContractedBy(textRect, 3f), BaseContent.WhiteTex);
+                    }
+                    else
+                    {
+                        GUI.DrawTexture(textRect, BaseContent.WhiteTex);
+                    }
+                }
+                else
+                {
+                    GUI.color = color * stored;
+                    GUI.DrawTexture(textRect, BaseContent.WhiteTex);
+                }
+                GUI.color = stored;
+
                 progressBarX += width;
 
                 TooltipHandler.TipRegion(textRect, () => {

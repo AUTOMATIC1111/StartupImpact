@@ -16,10 +16,24 @@
   <StartupImpact-total-others>Not measured</StartupImpact-total-others>
   
   <StartupImpactStartupTime>Startup time: {0}</StartupImpactStartupTime>
-  <StartupImpactStartupMods>Not directly related to mods: {0}</StartupImpactStartupMods>
+  <StartupImpactStartupMods>Mods startup impact: {0}</StartupImpactStartupMods>
   
-  <StartupImpactStartupNonmods>Non-mod startup impact: {0}</StartupImpactStartupNonmods>
+  <StartupImpactStartupNonmods>Not directly related to mods: {0}</StartupImpactStartupNonmods>
 
   <StartupImpactSeconds>{0}s</StartupImpactSeconds>
   <StartupImpactMilliseconds>{0}ms</StartupImpactMilliseconds>
+  
+  <StartupImpactProfilerTicksLabel>Use Environment.TickCount profiler</StartupImpactProfilerTicksLabel>
+  <StartupImpactProfilerTicksTooltip>Low precision, high reliability. Using other options is not recommended.</StartupImpactProfilerTicksTooltip>
+
+  <StartupImpactProfilerStopwatchLabel>Use Stopwatch profiler</StartupImpactProfilerStopwatchLabel>
+  <StartupImpactProfilerStopwatchTooltip>High precision, doesn't work properly on many systems (reports timings that are multiple times smaller than the amount of time actually passed).</StartupImpactProfilerStopwatchTooltip>
+
+  <StartupImpactProfilerDateLabel>Use DateTime.Now profiler</StartupImpactProfilerDateLabel>
+  <StartupImpactProfilerDateTooltip>High precision, doesn't work properly on many systems.</StartupImpactProfilerDateTooltip>
+
+  <StartupImpactFailedMeasuringLoadingTime> (Warning: failed to measure loading time)</StartupImpactFailedMeasuringLoadingTime>
+
+  <StartupImpactVerinfo>v{0}; profiler: {1}</StartupImpactVerinfo>
+
 </LanguageData>

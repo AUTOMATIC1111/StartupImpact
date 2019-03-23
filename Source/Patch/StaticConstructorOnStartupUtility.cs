@@ -24,9 +24,12 @@ namespace StartupImpact.Patch
             }
             StaticConstructorOnStartupUtility.coreStaticAssetsLoaded = true;
 
-            if (!StartupImpact.loadingTimeMeasured) {
+            if (!StartupImpact.loadingTimeMeasured)
+            {
+                Log.Message("S "+ StartupImpact.loadingTimeMeasured);
                 StartupImpact.loadingTimeMeasured = true;
-                StartupImpact.loadingTime = Environment.TickCount - StartupImpact.loadingTime;
+                StartupImpact.loadingProfiler.Stop("loading");
+                StartupImpact.loadingTime = StartupImpact.loadingProfiler.total;
             }
 
             DeepProfilerStart.mute = false;

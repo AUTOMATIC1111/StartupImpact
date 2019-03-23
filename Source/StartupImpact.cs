@@ -13,17 +13,62 @@ namespace StartupImpact
     public class StartupImpact :Mod
     {
         public static ModInfoList modlist = new ModInfoList();
-        public static int loadingTime;
         public static bool loadingTimeMeasured = false;
-        public static Profiler baseGameProfiler = new Profiler("base game");
+        public static int loadingTime = 0;
+        public static ProfilerTickCount loadingProfiler;
+        public static Profiler baseGameProfiler;
+        public static StartupImpactSettings settings;
 
         public StartupImpact(ModContentPack pack) :base(pack) {
-            loadingTime = Environment.TickCount;
+            settings = GetSettings<StartupImpactSettings>();
+            baseGameProfiler = new Profiler("base game");
+            loadingProfiler = new ProfilerTickCount();
+
+            loadingProfiler.Start("loading");
 
             var harmony = HarmonyInstance.Create("com.github.automatic1111.startupimpact");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-
+            
             ModConstructor.Create();
+        }
+
+        public override void DoSettingsWindowContents(Rect inRect)
+        {
+            base.DoSettingsWindowContents(inRect);
+            Listing_Standard listing = new Listing_Standard();
+            listing.Begin(inRect);
+
+            if (listing.RadioButton("StartupImpactProfilerTicksLabel".Translate(), settings.profilerType == ProfilerType.Ticks, 0, "StartupImpactProfilerTicksTooltip".Translate()))
+            {
+                settings.profilerType = ProfilerType.Ticks;
+            }
+
+            if (listing.RadioButton("StartupImpactProfilerDateLabel".Translate(), settings.profilerType == ProfilerType.Date, 0, "StartupImpactProfilerDateTooltip".Translate()))
+            {
+                settings.profilerType = ProfilerType.Date;
+            }
+
+            if (listing.RadioButton("StartupImpactProfilerStopwatchLabel".Translate(), settings.profilerType == ProfilerType.Stopwatch, 0, "StartupImpactProfilerStopwatchTooltip".Translate()))
+            {
+                settings.profilerType = ProfilerType.Stopwatch;
+            }
+
+            listing.End();
+        }
+
+        public override string SettingsCategory()
+        {
+            return "StartupImpact".Translate();
+        }
+
+        public static string GetVersion() {
+            try
+            {
+                return Assembly.GetAssembly(typeof(StartupImpact)).GetName().Version.ToString();
+            }
+            catch (Exception e) {
+                return e.Message;
+            }
         }
     }
 }

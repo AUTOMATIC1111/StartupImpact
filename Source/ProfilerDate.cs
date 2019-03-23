@@ -5,19 +5,18 @@ using System.Text;
 
 namespace StartupImpact
 {
-    public class ProfilerTickCount : ProfilerSingleThread
+    class ProfilerDate : ProfilerSingleThread
     {
-        int startTime;
-        
+        DateTime startTime;
+
         public override void start()
         {
-            startTime = Environment.TickCount;
+            startTime = DateTime.UtcNow;
         }
 
         public override int stop()
         {
-            return Environment.TickCount - startTime;
+            return (DateTime.UtcNow - startTime).Milliseconds;
         }
     }
-
 }

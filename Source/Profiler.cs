@@ -12,26 +12,42 @@ namespace StartupImpact
     public class Profiler
     {
         string what;
+        public readonly ProfilerType profilerType;
 
         public Profiler(string w)
         {
+            profilerType = StartupImpact.settings.profilerType;
             what = w;
         }
 
         public Dictionary<string, int> metrics = new Dictionary<string, int>();
         public int totalImpact = 0;
 
-        ProfilerTickCount[] threadProfilers = new ProfilerTickCount[20]; //yolo
+        public ProfilerSingleThread CreateProfiler()
+        {
+            switch (profilerType)
+            {
+                case ProfilerType.Date:
+                    return new ProfilerDate() { what = what };
+                case ProfilerType.Stopwatch:
+                    return new ProfilerStopwatch() { what = what };
+                default:
+                case ProfilerType.Ticks:
+                    return new ProfilerTickCount() { what = what };
+            }
+        }
 
-        ProfilerTickCount threadProfiler() {
+        ProfilerSingleThread[] threadProfilers = new ProfilerSingleThread[20]; //yolo
+
+        ProfilerSingleThread threadProfiler()
+        {
             int id = Thread.CurrentThread.ManagedThreadId;
             if (id < 0 || id > threadProfilers.Length)
                 id = threadProfilers.Length - 1;
 
-
             if (threadProfilers[id] == null)
-                threadProfilers[id] = new ProfilerTickCount(this);
-
+                threadProfilers[id] = CreateProfiler();
+                
             return threadProfilers[id];
         }
 
