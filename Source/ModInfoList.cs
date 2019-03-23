@@ -44,11 +44,12 @@ namespace StartupImpact
 
         public List<ModInfo> GetMods()
         {
-            return mods.OrderBy(x => -x.profile.totalImpact).Where(x => !x.mod.IsCoreMod).ToList();
+            //            return mods.OrderBy(x => -x.profile.totalImpact).Where(x => !x.mod.IsCoreMod).ToList();
+            return mods.OrderBy(x => -x.profile.totalImpact).ToList();
         }
         public ModInfo GetCore()
         {
-            return mods.Where(x => x.mod.IsCoreMod).FirstOrDefault();
+            return null;
         }
     }
 }

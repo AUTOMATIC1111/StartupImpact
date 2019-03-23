@@ -47,8 +47,8 @@ namespace StartupImpact
                 progressBarX += width;
 
                 TooltipHandler.TipRegion(textRect, () => {
-                    string res = cat;
-                    categoryHints.TryGetValue(cat, out res);
+                    string res;
+                    if(! categoryHints.TryGetValue(cat, out res)) res = cat;
                     res += ": " + TimeText(impact);
                     return res;
                 }, 1163428609);

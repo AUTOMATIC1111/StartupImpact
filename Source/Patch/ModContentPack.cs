@@ -52,6 +52,8 @@ namespace StartupImpact.Patch
     {
         static bool Prefix(ModContentPack __instance)
         {
+            DeepProfilerStart.mute = true;
+
             var info = StartupImpact.modlist.Get(__instance);
 
             info.Start("audioclips");
@@ -65,6 +67,8 @@ namespace StartupImpact.Patch
             info.Start("strings");
             Traverse.Create(__instance).Field<ModContentHolder<string>>("strings").Value.ReloadAll();
             info.Stop("strings");
+
+            DeepProfilerStart.mute = false;
 
             return false;
         }

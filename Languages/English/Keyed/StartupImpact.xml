@@ -10,13 +10,15 @@
   <StartupImpact-load-patches>Load XML patches</StartupImpact-load-patches>
   <StartupImpact-patch>Apply XML patches</StartupImpact-patch>
   <StartupImpact-constructor>Run mod's C# constructors</StartupImpact-constructor>
-  <StartupImpact-total-core>Core mod</StartupImpact-total-core>
   <StartupImpact-total-mods>Mods</StartupImpact-total-mods>
   <StartupImpact-total-mods-hidden>Hidden mods</StartupImpact-total-mods-hidden>
-  <StartupImpact-total-others>Not directly related to mods</StartupImpact-total-others>
+  <StartupImpact-total-basegame>Not directly related to mods</StartupImpact-total-basegame>
+  <StartupImpact-total-others>Not measured</StartupImpact-total-others>
   
   <StartupImpactStartupTime>Startup time: {0}</StartupImpactStartupTime>
-  <StartupImpactStartupMods>Mods startup impact: {0}</StartupImpactStartupMods>
+  <StartupImpactStartupMods>Not directly related to mods: {0}</StartupImpactStartupMods>
+  
+  <StartupImpactStartupNonmods>Non-mod startup impact: {0}</StartupImpactStartupNonmods>
 
   <StartupImpactSeconds>{0}s</StartupImpactSeconds>
   <StartupImpactMilliseconds>{0}ms</StartupImpactMilliseconds>

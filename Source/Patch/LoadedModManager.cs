@@ -10,9 +10,16 @@ namespace StartupImpact.Patch
     [HarmonyPatch(typeof(LoadedModManager), "LoadModXML")]
     class LoadedModManagerLoadModXML
     {
-        static void Prefix() {
+        static void Prefix()
+        {
             StartupImpact.modlist.Clear();
             ModContentPackLoadPatches.patchMods.Clear();
+
+            DeepProfilerStart.mute = true;
+        }
+        static void Postfix()
+        {
+            DeepProfilerStart.mute = false;
         }
     }
 }

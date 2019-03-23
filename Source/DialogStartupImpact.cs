@@ -23,9 +23,9 @@ namespace StartupImpact
             { "patch", SolidColorMaterials.NewSolidColorTexture(new Color(156f/255, 67f/255, 121f/255))},
             { "constructor", SolidColorMaterials.NewSolidColorTexture(new Color(176f/255, 223f/255, 224f/255))},
 
-            { "total-core", SolidColorMaterials.NewSolidColorTexture(new Color(72f/255, 121f/255, 175f/255))},
             { "total-mods", SolidColorMaterials.NewSolidColorTexture(new Color(175f/255, 126f/255, 72f/255))},
             { "total-mods-hidden", SolidColorMaterials.NewSolidColorTexture(new Color(103f/255, 83f/255, 61f/255))},
+            { "total-basegame", SolidColorMaterials.NewSolidColorTexture(new Color(72f/255, 121f/255, 175f/255))},
             { "total-others", SolidColorMaterials.NewSolidColorTexture(new Color(35f/255, 50f/255, 84f/255))},
             
         };
@@ -37,13 +37,16 @@ namespace StartupImpact
         int maxImpact;
 
         List<string> categories;
-        List<string> categoriesTotal = new List<string> { "total-core", "total-mods", "total-mods-hidden", "total-others" };
+        List<string> categoriesTotal = new List<string> { "total-mods", "total-mods-hidden", "total-basegame", "total-others" };
+        List<string> categoriesNonmods;
+        Dictionary<string, Texture2D> categoryColorsNonmods = new Dictionary<string, Texture2D>();
+        Dictionary<string, string> categoryHintsNonmods = new Dictionary<string, string>();
+
         Dictionary<string, int> metricsTotal;
-        int totalLoadingTime;
+        int basegameLoadingTime;
         int modsLoadingTime;
         int hiddenModsLoadingTime;
         UiTable table;
-
 
         public DialogStartupImpact() {
             foreach (var entry in categoryColors) {
@@ -52,9 +55,11 @@ namespace StartupImpact
 
             mods = StartupImpact.modlist.GetMods();
 
+            redoBaseGameStats();
             redoStats();
 
             table = new UiTable(this, mods.Count, 40, new float[] { -40, 30, -80, 38 });
+            
         }
 
         void redoStats() {
@@ -65,7 +70,6 @@ namespace StartupImpact
             HashSet<string> catSet = new HashSet<string>();
             foreach (ModInfo info in mods)
             {
-
                 if (info.hideInUi)
                 {
                     hiddenModsLoadingTime += info.profile.totalImpact;
@@ -84,36 +88,56 @@ namespace StartupImpact
             }
 
             categories = catSet.OrderBy(x => x).ToList();
-
-
-            ModInfo core = StartupImpact.modlist.GetCore();
-            totalLoadingTime = StartupImpact.loadingTime;
-            int coreLoadingTime = core == null ? 0 : core.profile.totalImpact;
-            int otherLoadingTime = totalLoadingTime - coreLoadingTime - modsLoadingTime - hiddenModsLoadingTime;
+            
             metricsTotal = new Dictionary<string, int> {
-                { "total-core", coreLoadingTime },
                 { "total-mods", modsLoadingTime },
                 { "total-mods-hidden", hiddenModsLoadingTime },
-                { "total-others", otherLoadingTime },
+                { "total-basegame", basegameLoadingTime },
+                { "total-others",  StartupImpact.loadingTime - modsLoadingTime - hiddenModsLoadingTime - basegameLoadingTime },
             };
+        }
+
+        public void redoBaseGameStats() {
+            categoriesNonmods = new List<string>();
+            basegameLoadingTime = 0;
+
+            foreach (string cat in StartupImpact.baseGameProfiler.metrics.Keys){
+                string title = cat;
+                if (title.EndsWith(".")) title = title.Substring(0, title.Length - 1);
+                int hash = cat.GetHashCode();
+
+                categoryHintsNonmods[cat] = title;
+                categoryColorsNonmods[cat] = SolidColorMaterials.NewSolidColorTexture(new Color((hash & 0xff) / 255f, ((hash>>8) & 0xff) / 255f, ((hash >> 16) & 0xff)/255f));
+                categoriesNonmods.Add(cat);
+
+                basegameLoadingTime += StartupImpact.baseGameProfiler.metrics[cat];
+            }
         }
 
         public override void DoWindowContents(Rect area)
         {
             Text.Anchor = TextAnchor.MiddleLeft;
             float y = 0;
-            
-            Rect titleRect = new Rect(0, y, area.width, 30);
+
             Text.Font = GameFont.Medium;
-            Widgets.Label(titleRect, "StartupImpactStartupTime".Translate(ProfilerBar.TimeText(totalLoadingTime)));
+
+            Rect titleRect = new Rect(0, y, area.width, 30);
+            Widgets.Label(titleRect, "StartupImpactStartupTime".Translate(ProfilerBar.TimeText(StartupImpact.loadingTime)));
             y += titleRect.height;
 
-            Rect profileRect = new Rect(0, y, area.width-16, 46);
-            ProfilerBar.Draw(profileRect, metricsTotal, categoriesTotal, totalLoadingTime, categoryHints, categoryColors, defaultColor);
+            Rect profileRect = new Rect(0, y, area.width - 16, 46);
+            ProfilerBar.Draw(profileRect, metricsTotal, categoriesTotal, StartupImpact.loadingTime, categoryHints, categoryColors, defaultColor);
             y += profileRect.height + 4;
+            
+            Rect nonmodsTitleRect = new Rect(0, y, area.width, 30);
+            Widgets.Label(nonmodsTitleRect, "StartupImpactStartupNonmods".Translate(ProfilerBar.TimeText(basegameLoadingTime)));
+            y += nonmodsTitleRect.height;
+
+            Rect nonmodsProfileRect = new Rect(0, y, area.width - 16, 46);
+            ProfilerBar.Draw(nonmodsProfileRect, StartupImpact.baseGameProfiler.metrics, categoriesNonmods, basegameLoadingTime, categoryHintsNonmods, categoryColorsNonmods, defaultColor);
+            y += nonmodsProfileRect.height + 4;
 
             Rect modsTitleRect = new Rect(0, y, area.width, 30);
-            Text.Font = GameFont.Medium;
             Widgets.Label(modsTitleRect, "StartupImpactStartupMods".Translate(ProfilerBar.TimeText(modsLoadingTime)));
             y += titleRect.height + 8;
             Text.Font = GameFont.Small;
@@ -142,13 +166,14 @@ namespace StartupImpact
 
             table.Stop();
 
+            GUI.color = Color.white;
+
             Rect rect3 = new Rect(area.width - 120, area.height - 35f, 120, 35f);
             if (Widgets.ButtonText(rect3, "Close".Translate(), true, false, true))
             {
                 Close();
             }
 
-            GUI.color = Color.white;
             Text.Anchor = TextAnchor.UpperLeft;
         }
         

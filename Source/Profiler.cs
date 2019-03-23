@@ -21,16 +21,16 @@ namespace StartupImpact
         public Dictionary<string, int> metrics = new Dictionary<string, int>();
         public int totalImpact = 0;
 
-        SingleThreadProfiler[] threadProfilers = new SingleThreadProfiler[20]; //yolo
-        
-        SingleThreadProfiler threadProfiler() {
+        ProfilerTickCount[] threadProfilers = new ProfilerTickCount[20]; //yolo
+
+        ProfilerTickCount threadProfiler() {
             int id = Thread.CurrentThread.ManagedThreadId;
             if (id < 0 || id > threadProfilers.Length)
                 id = threadProfilers.Length - 1;
 
 
             if (threadProfilers[id] == null)
-                threadProfilers[id] = new SingleThreadProfiler(this);
+                threadProfilers[id] = new ProfilerTickCount(this);
 
             return threadProfilers[id];
         }
@@ -58,45 +58,6 @@ namespace StartupImpact
             return res;
         }
 
-        class SingleThreadProfiler
-        {
-            Profiler profiler;
-            int startTime = -1;
-            string category;
-
-            internal SingleThreadProfiler(Profiler profiler)
-            {
-                this.profiler = profiler;
-            }
-
-            public void Start(string cat)
-            {
-                if (startTime != -1)
-                {
-                    return;
-                }
-
-                startTime = Environment.TickCount;
-                category = cat;
-            }
-
-
-            public int Stop(string cat)
-            {
-                if (startTime == -1)
-                {
-                    return 0;
-                }
-                if (cat != category)
-                {
-                    return 0;
-                }
-
-                int ms = Environment.TickCount - startTime;
-                startTime = -1;
-                return ms;
-            }
-        }
 
         class SingleThreadDateTime
         {

@@ -12,6 +12,8 @@ namespace StartupImpact.Patch
     class StaticConstructorOnStartupUtilityCallAll
     {
         static public bool Prefix() {
+            DeepProfilerStart.mute = true;
+
             IEnumerable<Type> enumerable = GenTypes.AllTypesWithAttribute<StaticConstructorOnStartup>();
             foreach (Type type in enumerable)
             {
@@ -23,8 +25,11 @@ namespace StartupImpact.Patch
             StaticConstructorOnStartupUtility.coreStaticAssetsLoaded = true;
 
             if (!StartupImpact.loadingTimeMeasured) {
+                StartupImpact.loadingTimeMeasured = true;
                 StartupImpact.loadingTime = Environment.TickCount - StartupImpact.loadingTime;
             }
+
+            DeepProfilerStart.mute = false;
 
             return false;
         }

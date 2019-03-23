@@ -13,6 +13,7 @@ namespace StartupImpact.Patch
         static void Prefix(PatchOperation __instance)
         {
             if (__instance.sourceFile == null) return;
+            DeepProfilerStart.mute = true;
 
             ModInfo info = null;
             if (ModContentPackLoadPatches.patchMods.TryGetValue(__instance.sourceFile, out info))
@@ -23,6 +24,7 @@ namespace StartupImpact.Patch
         static void Postfix(PatchOperation __instance)
         {
             if (__instance.sourceFile == null) return;
+            DeepProfilerStart.mute = false;
 
             ModInfo info = null;
             if (ModContentPackLoadPatches.patchMods.TryGetValue(__instance.sourceFile, out info))

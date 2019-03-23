@@ -15,6 +15,7 @@ namespace StartupImpact
         public static ModInfoList modlist = new ModInfoList();
         public static int loadingTime;
         public static bool loadingTimeMeasured = false;
+        public static Profiler baseGameProfiler = new Profiler("base game");
 
         public StartupImpact(ModContentPack pack) :base(pack) {
             loadingTime = Environment.TickCount;
