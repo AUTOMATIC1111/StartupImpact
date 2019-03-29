@@ -23,9 +23,9 @@ namespace StartupImpact
             profile.Start(cat);
         }
 
-        public void Stop(string cat)
+        public int Stop(string cat)
         {
-            profile.Stop(cat);
+            return profile.Stop(cat);
         }
     }
 }

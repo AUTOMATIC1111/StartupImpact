@@ -56,7 +56,7 @@ namespace StartupImpact
             threadProfiler().Start(cat);
         }
 
-        public void Stop(string cat)
+        public int Stop(string cat)
         {
             int ms = threadProfiler().Stop(cat);
             totalImpact += ms;
@@ -65,6 +65,8 @@ namespace StartupImpact
             metrics.TryGetValue(cat, out total);
             total += ms;
             metrics[cat] = total;
+
+            return ms;
         }
 
         public int Impact(string v)

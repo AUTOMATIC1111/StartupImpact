@@ -30,6 +30,17 @@ namespace StartupImpact
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             
             ModConstructor.Create();
+
+            if (settings.resolveReferences) {
+                foreach (Type type in typeof(Def).AllSubclasses())
+                {
+                    var method = AccessTools.Method(type, "ResolveReferences");
+                    if (method != null)
+                    {
+                        harmony.Patch(method, new HarmonyMethod(typeof(ResolveReferences), "Prefix"), new HarmonyMethod(typeof(ResolveReferences), "Postfix"));
+                    }
+                }
+            }
         }
 
         public override void DoSettingsWindowContents(Rect inRect)
@@ -52,6 +63,8 @@ namespace StartupImpact
             {
                 settings.profilerType = ProfilerType.Stopwatch;
             }
+
+            listing.CheckboxLabeled("StartupImpactResolveReferencesLabel".Translate(), ref settings.resolveReferences, "StartupImpactResolveReferencesTooltip".Translate());
 
             listing.End();
         }

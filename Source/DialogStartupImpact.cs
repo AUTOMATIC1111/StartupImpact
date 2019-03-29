@@ -1,4 +1,5 @@
-﻿using System;
+﻿using StartupImpact.Patch;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
@@ -16,13 +17,14 @@ namespace StartupImpact
         public static readonly Dictionary<string, Color> categoryColors = new Dictionary<string, Color>
         {
             { "textures", new Color(156f/255, 147f/255, 67f/255) },
-            { "audioclips", new Color(117f/255, 67f/255, 156f/255)},
+            { "audioclips", new Color(67f/255, 84f/255, 156f/255)},
             { "strings", new Color(130f/255, 130f/255, 130f/255)},
             { "defs-0-load", new Color(84f/255, 207f/255, 154f/255)},
             { "defs-1-create", new Color(72f/255, 121f/255, 175f/255)},
             { "load-patches", new Color(136f/255, 156f/255, 67f/255)},
             { "patch", new Color(156f/255, 67f/255, 121f/255)},
             { "constructor", new Color(176f/255, 223f/255, 224f/255)},
+            { "resolve-references", new Color(82f/255, 26f/255, 106f/255)},
 
             { "total-mods", new Color(175f/255, 126f/255, 72f/255)},
             { "total-mods-hidden", new Color(103f/255, 83f/255, 61f/255)},
@@ -109,7 +111,8 @@ namespace StartupImpact
             categoriesNonmods = new List<string>();
             basegameLoadingTime = 0;
 
-            foreach (string cat in StartupImpact.baseGameProfiler.metrics.Keys){
+            foreach (var entry in StartupImpact.baseGameProfiler.metrics){
+                string cat = entry.Key;
                 string title = cat;
                 if (title.EndsWith(".")) title = title.Substring(0, title.Length - 1);
                 int hash = cat.GetHashCode();
@@ -117,8 +120,7 @@ namespace StartupImpact
                 categoryHintsNonmods[cat] = title;
                 categoryColorsNonmods[cat] = new Color((hash & 0xff) / 255f, ((hash>>8) & 0xff) / 255f, ((hash >> 16) & 0xff)/255f);
                 categoriesNonmods.Add(cat);
-
-                basegameLoadingTime += StartupImpact.baseGameProfiler.metrics[cat];
+                basegameLoadingTime += entry.Value;
             }
         }
 

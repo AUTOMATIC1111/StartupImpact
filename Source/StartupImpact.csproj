@@ -77,6 +77,7 @@
     <Compile Include="Patch\ModContentPack.cs" />
     <Compile Include="Patch\OptionListingUtility.cs" />
     <Compile Include="Patch\PatchOperation.cs" />
+    <Compile Include="Patch\ResolveReferences.cs" />
     <Compile Include="Patch\StaticConstructorOnStartupUtility.cs" />
     <Compile Include="Profiler.cs" />
     <Compile Include="ProfilerBar.cs" />

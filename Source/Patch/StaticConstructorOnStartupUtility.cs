@@ -26,13 +26,18 @@ namespace StartupImpact.Patch
 
             if (!StartupImpact.loadingTimeMeasured)
             {
-                Log.Message("S "+ StartupImpact.loadingTimeMeasured);
                 StartupImpact.loadingTimeMeasured = true;
                 StartupImpact.loadingProfiler.Stop("loading");
                 StartupImpact.loadingTime = StartupImpact.loadingProfiler.total;
             }
 
-            DeepProfilerStart.mute = false;
+            int spentResolving;
+            if (StartupImpact.baseGameProfiler.metrics.TryGetValue("Resolve references.", out spentResolving))
+            {
+                spentResolving -= ResolveReferences.totalResolving;
+                if (spentResolving < 0) spentResolving = 0;
+                StartupImpact.baseGameProfiler.metrics["Resolve references."] = spentResolving;
+            }
 
             return false;
         }

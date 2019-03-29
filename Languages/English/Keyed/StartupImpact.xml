@@ -10,6 +10,7 @@
   <StartupImpact-load-patches>Load XML patches</StartupImpact-load-patches>
   <StartupImpact-patch>Apply XML patches</StartupImpact-patch>
   <StartupImpact-constructor>Run mod's C# constructors</StartupImpact-constructor>
+  <StartupImpact-resolve-references>Resolve references</StartupImpact-resolve-references>
   <StartupImpact-total-mods>Mods</StartupImpact-total-mods>
   <StartupImpact-total-mods-hidden>Hidden mods</StartupImpact-total-mods-hidden>
   <StartupImpact-total-basegame>Not directly related to mods</StartupImpact-total-basegame>
@@ -31,6 +32,9 @@
 
   <StartupImpactProfilerDateLabel>Use DateTime.Now profiler</StartupImpactProfilerDateLabel>
   <StartupImpactProfilerDateTooltip>High precision, doesn't work properly on many systems.</StartupImpactProfilerDateTooltip>
+
+  <StartupImpactResolveReferencesLabel>Attribute "Resolve References" times to mods.</StartupImpactResolveReferencesLabel>
+  <StartupImpactResolveReferencesTooltip>May cause issues on some systems.</StartupImpactResolveReferencesTooltip>
 
   <StartupImpactFailedMeasuringLoadingTime> (Warning: failed to measure loading time)</StartupImpactFailedMeasuringLoadingTime>
 
