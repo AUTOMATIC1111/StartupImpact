@@ -54,19 +54,26 @@ namespace StartupImpact.Patch
         {
             DeepProfilerStart.mute = true;
 
+            var inst = Traverse.Create(__instance);
+
             var info = StartupImpact.modlist.Get(__instance);
 
             info.Start("audioclips");
-            Traverse.Create(__instance).Field<ModContentHolder<AudioClip>>("audioClips").Value.ReloadAll();
+            inst.Field<ModContentHolder<AudioClip>>("audioClips").Value.ReloadAll();
             info.Stop("audioclips");
 
             info.Start("textures");
-            Traverse.Create(__instance).Field<ModContentHolder<Texture2D>>("textures").Value.ReloadAll();
+            inst.Field<ModContentHolder<Texture2D>>("textures").Value.ReloadAll();
             info.Stop("textures");
 
             info.Start("strings");
-            Traverse.Create(__instance).Field<ModContentHolder<string>>("strings").Value.ReloadAll();
+            inst.Field<ModContentHolder<string>>("strings").Value.ReloadAll();
             info.Stop("strings");
+
+            info.Start("assetBundles");
+            __instance.assetBundles.ReloadAll();
+            inst.Field<List<List<string>>>("allAssetNamesInBundleCached").Value = null;
+            info.Stop("assetBundles");
 
             DeepProfilerStart.mute = false;
 

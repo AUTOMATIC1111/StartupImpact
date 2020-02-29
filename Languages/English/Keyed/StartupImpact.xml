@@ -5,6 +5,7 @@
   <StartupImpact-textures>Load textures</StartupImpact-textures>
   <StartupImpact-audioclips>Load sounds</StartupImpact-audioclips>
   <StartupImpact-strings>Load strings</StartupImpact-strings>
+  <StartupImpact-assetBundles>Load asset bundles</StartupImpact-assetBundles>
   <StartupImpact-defs-0-load>Load defs from XML</StartupImpact-defs-0-load>
   <StartupImpact-defs-1-create>Create defs</StartupImpact-defs-1-create>
   <StartupImpact-load-patches>Load XML patches</StartupImpact-load-patches>
