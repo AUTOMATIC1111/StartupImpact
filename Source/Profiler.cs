@@ -37,13 +37,16 @@ namespace StartupImpact
             }
         }
 
-        ProfilerSingleThread[] threadProfilers = new ProfilerSingleThread[20]; //yolo
+        ProfilerSingleThread[] threadProfilers = new ProfilerSingleThread[200]; //yolo
 
         ProfilerSingleThread threadProfiler()
         {
             int id = Thread.CurrentThread.ManagedThreadId;
             if (id < 0 || id > threadProfilers.Length)
+            {
+                Log.Error("Thread id too large: "+id);
                 id = threadProfilers.Length - 1;
+            }
 
             if (threadProfilers[id] == null)
                 threadProfilers[id] = CreateProfiler();
@@ -56,22 +59,26 @@ namespace StartupImpact
             threadProfiler().Start(cat);
         }
 
-        public int Stop(string cat)
+        public int Stop(string inCat)
         {
-            int ms = threadProfiler().Stop(cat);
-            totalImpact += ms;
+            string cat;
+            int ms = threadProfiler().Stop(inCat, out cat);
 
-            int total = 0;
-            metrics.TryGetValue(cat, out total);
-            total += ms;
-            metrics[cat] = total;
+            if (Thread.CurrentThread.ManagedThreadId == StartupImpact.mainThreadId) {
+                totalImpact += ms;
+
+                int total;
+                metrics.TryGetValue(cat, out total);
+                total += ms;
+                metrics[cat] = total;
+            }
 
             return ms;
         }
 
         public int Impact(string v)
         {
-            int res = 0;
+            int res;
             metrics.TryGetValue(v, out res);
             return res;
         }
@@ -98,7 +105,6 @@ namespace StartupImpact
                 startTime = DateTime.Now;
                 category = cat;
             }
-
 
             public int Stop(string cat)
             {

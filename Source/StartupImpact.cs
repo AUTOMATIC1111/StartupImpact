@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using StartupImpact.Patch;
 using System;
 using System.Collections.Generic;
@@ -12,6 +12,7 @@ namespace StartupImpact
 {
     public class StartupImpact :Mod
     {
+        public static int mainThreadId;
         public static ModInfoList modlist = new ModInfoList();
         public static bool loadingTimeMeasured = false;
         public static int loadingTime = 0;
@@ -20,13 +21,15 @@ namespace StartupImpact
         public static StartupImpactSettings settings;
 
         public StartupImpact(ModContentPack pack) :base(pack) {
+            mainThreadId = Thread.CurrentThread.ManagedThreadId;
+
             settings = GetSettings<StartupImpactSettings>();
             baseGameProfiler = new Profiler("base game");
             loadingProfiler = new ProfilerTickCount();
 
             loadingProfiler.Start("loading");
 
-            var harmony = HarmonyInstance.Create("com.github.automatic1111.startupimpact");
+            var harmony = new Harmony("com.github.automatic1111.startupimpact");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
             
             ModConstructor.Create();
@@ -35,7 +38,7 @@ namespace StartupImpact
                 foreach (Type type in typeof(Def).AllSubclasses())
                 {
                     var method = AccessTools.Method(type, "ResolveReferences");
-                    if (method != null)
+                    if (method != null && method.DeclaringType == type)
                     {
                         harmony.Patch(method, new HarmonyMethod(typeof(ResolveReferences), "Prefix"), new HarmonyMethod(typeof(ResolveReferences), "Postfix"));
                     }

@@ -1,4 +1,5 @@
-﻿using Verse;
+﻿using System;
+using Verse;
 
 namespace StartupImpact
 {
@@ -11,16 +12,19 @@ namespace StartupImpact
 
     public class StartupImpactSettings : ModSettings
     {
- 
+        public static bool IsMono() {
+            return Type.GetType("Mono.Runtime") != null;
+        }
+
         public ProfilerType profilerType = ProfilerType.Ticks;
-        public bool resolveReferences = false;
+        public bool resolveReferences = !IsMono();
 
         public override void ExposeData()
         {
             base.ExposeData();
 
             Scribe_Values.Look(ref profilerType, "profilerType", ProfilerType.Ticks);
-            Scribe_Values.Look(ref resolveReferences, "resolveReferences", false);
+            Scribe_Values.Look(ref resolveReferences, "resolveReferences", !IsMono());
         }
     }
 }

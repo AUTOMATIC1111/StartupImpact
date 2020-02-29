@@ -94,9 +94,14 @@ namespace StartupImpact
 
             categories = catSet.OrderBy(x => x).ToList();
 
-            if (StartupImpact.loadingTime == 0) {
+            if (StartupImpact.loadingTime == 0)
+            {
                 StartupImpact.loadingTime = modsLoadingTime + hiddenModsLoadingTime + basegameLoadingTime;
                 failedMeasuringLoadingTime = true;
+            }
+            else if(modsLoadingTime + hiddenModsLoadingTime + basegameLoadingTime > StartupImpact.loadingTime)
+            {
+                StartupImpact.loadingTime = modsLoadingTime + hiddenModsLoadingTime + basegameLoadingTime;
             }
 
             metricsTotal = new Dictionary<string, int> {

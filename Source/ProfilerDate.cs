@@ -18,5 +18,13 @@ namespace StartupImpact
         {
             return (DateTime.UtcNow - startTime).Milliseconds;
         }
+
+        public override int stopAndStart()
+        {
+            DateTime now = DateTime.UtcNow;
+            int passed = (now - startTime).Milliseconds;
+            startTime = now;
+            return passed;
+        }
     }
 }

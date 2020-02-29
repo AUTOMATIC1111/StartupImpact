@@ -8,7 +8,7 @@ namespace StartupImpact
     public class ProfilerTickCount : ProfilerSingleThread
     {
         int startTime;
-        
+
         public override void start()
         {
             startTime = Environment.TickCount;
@@ -17,6 +17,13 @@ namespace StartupImpact
         public override int stop()
         {
             return Environment.TickCount - startTime;
+        }
+
+        public override int stopAndStart() {
+            int now = Environment.TickCount;
+            int passed = now - startTime;
+            startTime = now;
+            return passed;
         }
     }
 

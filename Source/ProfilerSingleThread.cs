@@ -10,11 +10,16 @@ namespace StartupImpact
     {
         public string what;
         public int total = 0;
-  
+
         public abstract void start();
         public abstract int stop();
+        public virtual int stopAndStart() {
+            int res = stop();
+            start();
+            return res;
+        }
 
-        string category;
+        List<string> categories = new List<string>();
 
         string What {
             get {
@@ -27,31 +32,54 @@ namespace StartupImpact
         {
             if (cat == null) return;
 
-            if (category != null)
+            if (categories.Count > 0)
             {
-                Log.Error("Starting " + What + " for [" + cat + "] while it's already active timing [" + category + "]");
-                stop();
+                int ms = stopAndStart();
+                total += ms;
+            }
+            else
+            {
+                start();
             }
 
-            category = cat;
-            start();
+            categories.Insert(0, cat);
         }
 
         public int Stop(string cat)
         {
-            if (category == null)
+            string outCat;
+
+            return Stop(cat, out outCat);
+        }
+
+        public int Stop(string cat, out string outCat)
+        {
+            if (categories.Count == 0)
             {
-                Log.Error("Stopping " + What + " for [" + cat + "] while it's already inactive");
+                if (cat != null) Log.Error("Stopping " + What + " for [" + cat + "] while it's already inactive");
+                outCat = "none";
                 return 0;
             }
-            if (cat != category)
+
+            if (cat != null && cat != categories[0])
             {
-                Log.Error("Stopping " + What + " for [" + cat + "] while it's timing [" + category + "]");
+                Log.Error("Stopping " + What + " for [" + cat + "] while it's timing [" + categories[0] + "]");
             }
 
-            int ms = stop();
+            outCat = categories[0];
+            categories.RemoveAt(0);
+
+            int ms;
+            if (categories.Count > 0)
+            {
+                ms = stopAndStart();
+            }
+            else
+            {
+                ms = stop();
+            }
+
             total += ms;
-            category = null;
             return ms;
         }
     }

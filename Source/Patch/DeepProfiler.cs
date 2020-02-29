@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,15 +11,12 @@ namespace StartupImpact.Patch
     [HarmonyPatch(typeof(DeepProfiler), "Start")]
     public class DeepProfilerStart
     {
-        public static string storedLabel;
         public static bool mute = false;
 
         public static void Prefix(string label) {
             if (mute) return;
 
-            if (storedLabel == null) {
-                StartupImpact.baseGameProfiler.Start(storedLabel = label);
-            }
+            StartupImpact.baseGameProfiler.Start(label);
         }
     }
 
@@ -28,12 +25,9 @@ namespace StartupImpact.Patch
     {
         public static void Prefix()
         {
-            if (DeepProfilerStart.storedLabel != null)
-            {
-                StartupImpact.baseGameProfiler.Stop(DeepProfilerStart.storedLabel);
-            }
+            if (DeepProfilerStart.mute) return;
 
-            DeepProfilerStart.storedLabel = null;
+            StartupImpact.baseGameProfiler.Stop(null);
         }
     }
 }
