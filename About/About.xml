@@ -10,4 +10,13 @@ Use the button in main menu to view statistics.
 
 This mod must be first in the mod list to work properly.
 ]]></description>
+
+    <loadAfter>
+        <li>brrainz.harmony</li>
+    </loadAfter>
+    
+    <loadBefore>
+        <li>Ludeon.RimWorld</li>
+    </loadBefore>
+
 </ModMetaData>
