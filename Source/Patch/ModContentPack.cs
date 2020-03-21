@@ -47,7 +47,7 @@ namespace StartupImpact.Patch
         }
     }
 
-    [HarmonyPatch(typeof(ModContentPack), "<ReloadContent>b__40_0")]
+    [HarmonyPatch(typeof(ModContentPack), "<ReloadContent>b__41_0")]
     class ModContentPackReloadContentm__1
     {
         static bool Prefix(ModContentPack __instance)
