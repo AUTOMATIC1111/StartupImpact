@@ -1,8 +1,7 @@
 ﻿using HarmonyLib;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using UnityEngine;
 using Verse;
 
@@ -47,9 +46,17 @@ namespace StartupImpact.Patch
         }
     }
 
-    // this patch is applied manually
+    [HarmonyPatch]
     class ModContentPackReloadContentDelegate
     {
+        static MethodBase TargetMethod()
+        {
+            MethodInfo methodReloadContent = AccessTools.DeclaredMethod(typeof(ModContentPack), "ReloadContentInt");
+            if (methodReloadContent != null)
+                return methodReloadContent;
+            return AccessTools.GetDeclaredMethods(typeof(ModContentPack)).Where(x => x.Name.StartsWith("<ReloadContent>")).FirstOrDefault();
+        }
+
         static bool Prefix(ModContentPack __instance)
         {
             DeepProfilerStart.mute = true;
