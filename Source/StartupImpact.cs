@@ -1,9 +1,6 @@
 ﻿using HarmonyLib;
 using StartupImpact.Patch;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
@@ -32,16 +29,6 @@ namespace StartupImpact
 
             var harmony = new Harmony("com.github.automatic1111.startupimpact");
             harmony.PatchAll(Assembly.GetExecutingAssembly());
-
-            MethodInfo methodReloadContent = AccessTools.GetDeclaredMethods(typeof(ModContentPack)).Where(x => x.Name.StartsWith("<ReloadContent>")).FirstOrDefault();
-            if (methodReloadContent == null)
-            {
-                Log.Error("Failed to find <ReloadContent> delegate");
-            }
-            else
-            {
-                harmony.Patch(methodReloadContent, new HarmonyMethod(typeof(ModContentPackReloadContentDelegate), "Prefix"));
-            }
 
             ModConstructor.Create();
 
