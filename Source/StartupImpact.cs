@@ -1,6 +1,7 @@
 ﻿using HarmonyLib;
 using StartupImpact.Patch;
 using System;
+using System.CodeDom;
 using System.Reflection;
 using System.Threading;
 using UnityEngine;
@@ -17,6 +18,8 @@ namespace StartupImpact
         public static ProfilerTickCount loadingProfiler;
         public static Profiler baseGameProfiler;
         public static StartupImpactSettings settings;
+
+        CodeCompileUnit compileUnit = new CodeCompileUnit();
 
         public StartupImpact(ModContentPack pack) :base(pack) {
             mainThreadId = Thread.CurrentThread.ManagedThreadId;

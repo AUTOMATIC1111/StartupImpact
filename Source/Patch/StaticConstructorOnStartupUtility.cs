@@ -19,7 +19,16 @@ namespace StartupImpact.Patch
             {
                 ModInfo info = StartupImpact.modlist.Get(ModConstructor.FindMod(type.Assembly));
                 if (info != null) info.Start("constructor");
-                RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+
+                try
+                {
+                    RuntimeHelpers.RunClassConstructor(type.TypeHandle);
+                }
+                catch (Exception ex)
+                {
+                    Log.Error(string.Concat(new object[] { "Error in static constructor of ", type, ": ", ex }));
+                }
+
                 if (info != null) info.Stop("constructor");
             }
             StaticConstructorOnStartupUtility.coreStaticAssetsLoaded = true;
